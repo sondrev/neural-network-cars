@@ -10,7 +10,7 @@ export default class TrackBuilder {
         const curvedTrackType =  new TrackType("trackCurved.png", 133,133);
       
         let x=100;
-        let y=500;
+        let y=700;
         let dir =0; //up=0, right=1
 
         function moveStraight(dir) {
@@ -27,7 +27,8 @@ export default class TrackBuilder {
             if (dir === 3) x-=curvedTrackType.getWidth();
         }
       
-        const trackList = ["s","s","s","r","s","s","r","s","s","s","r","s","s","r"]
+        //const trackList = ["s","s","s","r","s","s","r","s","s","s","r","s","s","r"]
+        const trackList = ["s","s","s","s","s","r","s","s","s","s","s","s","s","s","r","s","s","s","s","s","r","s","s","s","s","s","s","s","s","r"]
         trackList.forEach(t => {
           switch(t) {
             case "s":

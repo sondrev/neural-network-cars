@@ -10,8 +10,8 @@ export default class Track {
     getDirection = () => this.direction;
     getX = () => this.x;
     getY = () => this.y;
-    getLength = () => this.length;
-    getWidth = () => this.width;
+    getHeight = () => this.trackType.getHeight();
+    getWidth = () => this.trackType.getWidth();
     getTrackType = () => this.trackType;
     getRotation = () => {
         return Math.PI*this.direction*0.5;

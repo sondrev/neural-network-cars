@@ -12,7 +12,23 @@ export default class CanvasManager {
 
         this.imgTrackCurved = new Image() 
         this.imgTrackCurved.src = "trackStraight.png" 
+
+
+
+        this.canvas.addEventListener("click", function (evt) {
+                var rect = this.getBoundingClientRect();
+                world.collisionCheck(evt.clientX - rect.left,evt.clientY - rect.top,4)
+                return {
+                    x: evt.clientX - rect.left,
+                    y: evt.clientY - rect.top
+                };
+        }, false);
+      
+      //Get Mouse Position
+
     }
+
+
 
     getHtml() {
         return this.canvas;
@@ -55,15 +71,23 @@ export default class CanvasManager {
             ctx.fillStyle = "black"
             ctx.fillRect(x-5, y-5,10,10);
         }
+
+        const drawCollisionDraw = function(ctx,x,y,theta,r) {
+            ctx.moveTo(x,y);
+            ctx.lineTo(x + r * Math.cos(theta), y + r * Math.sin(theta));
+            ctx.stroke();
+        }
         
 
-        cars.forEach(car=> {
+        ais.forEach(ai=> {
 
-            const r =  300;
-            const theta = car.getAngle()-Math.PI/2;
-            this.ctx.moveTo(car.getX(),car.getY());
-            this.ctx.lineTo(car.getX() + r * Math.cos(theta), car.getY() + r * Math.sin(theta));
-            this.ctx.stroke();
+            const car = ai.getCar();
+
+            drawCollisionDraw(this.ctx,car.getX(),car.getY(),car.getAngle()-Math.PI/2,car.getCollisionRayStraight())
+            drawCollisionDraw(this.ctx,car.getX(),car.getY(),car.getAngle()-Math.PI/2 -car.getCollisionRayView(),car.getCollisionRayLeft())
+            drawCollisionDraw(this.ctx,car.getX(),car.getY(),car.getAngle()-Math.PI/2 +car.getCollisionRayView(),car.getCollisionRayRight())
+
+            
 
             
             this.ctx.save();
@@ -80,9 +104,15 @@ export default class CanvasManager {
             drawWheel(this.ctx,carW/2,-15)
             drawWheel(this.ctx,carW/2,15)
 
+
+
             this.ctx.beginPath();
             this.ctx.fillStyle = car.getColor();
             this.ctx.fillRect(-carW/2,-carL/2, carW,carL);
+
+            this.ctx.font = "20px Arial";
+            this.ctx.fillStyle = "black";
+            this.ctx.fillText(ai.getId() , -4, 0);
 
 
             this.ctx.restore();
@@ -118,7 +148,7 @@ export default class CanvasManager {
             
 
 
-            y+=60;
+            y+=80;
         })
 
     }
