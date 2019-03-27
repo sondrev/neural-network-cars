@@ -2,9 +2,7 @@ import Track from './track.js';
 import TrackType from './trackType.js';
 
 export default class TrackBuilder {
-    buildTracks = (world) => {
-
-        //let builtTracks = [];
+    buildTracks = (world,trackNumber) => {
 
         const straightTrackType =  new TrackType("trackStraight.png", 125,100);
         const curvedTrackType =  new TrackType("trackCurved.png", 133,133);
@@ -28,7 +26,15 @@ export default class TrackBuilder {
         }
       
         //const trackList = ["s","s","s","r","s","s","r","s","s","s","r","s","s","r"]
-        const trackList = ["s","s","s","s","s","r","s","s","s","s","s","s","s","s","r","s","s","s","s","s","r","s","s","s","s","s","s","s","s","r"]
+        const trackList1 = ["s","s","s","s","s","r","s","s","s","s","s","s","s","s","r","s","s","s","s","s","r","s","s","s","s","s","s","s","s","r"]
+        const trackList2 = ["s","r","s","r","s","r","s","r"]
+        const trackList3 = ["s","s","s","s","s","r","s","s","s","s","s","s","s","s","r","s","s","s","s","s","r","s","s","s","s","s","s","s","s","r"]
+        let trackList = []
+
+        if (trackNumber === 1) trackList=trackList1;
+        if (trackNumber === 2) trackList=trackList2;
+        if (trackNumber === 3) trackList=trackList3;
+
         trackList.forEach(t => {
           switch(t) {
             case "s":

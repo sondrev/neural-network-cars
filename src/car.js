@@ -24,7 +24,7 @@ export default class Car {
         this.distanceTraveled = 0;
 
         this.collisionRayMax = 500;
-        this.collisionRayView = 0.6; //How much the car can see on the sides, in radians
+        this.collisionRayView = 1.2; //How much the car can see on the sides, in radians
         this.collisionRayStraight = 0;
         this.collisionRayLeft = 0;
         this.collisionRayRight = 0;

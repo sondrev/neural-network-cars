@@ -1,39 +1,38 @@
 import CanvasManager from './canvasManager.js'
 import World from './world.js'
 import Learner from './learner.js'
-import TrackBuilder from './trackBuilder.js';
 
-const freezeTime = 20;
-
+import Settings from './settings.js';
+import InputManager from './inputManager.js'
 function component() {
 
-  const world = new World();
-  const canvasManager = new CanvasManager(world);
+  const settings = new Settings();
+  const inputManager = new InputManager(settings);
+  const world = new World(settings);
   const learner = new Learner(world);
+  const canvasManager = new CanvasManager(world,learner,settings);
   let ai = learner.generateInitialGeneration(world);
-  const trackBuilder = new TrackBuilder();
-  trackBuilder.buildTracks(world);
 
-  let delay=freezeTime;
 
   function update() {
 
-    if (ai.map(a => a.getCar()).every(car => !car.getIsAlive() || car.getIsStuck())) {
-      delay--;
-      if (delay === 0) {
-        delay=freezeTime;
+    for (let f=0;f<settings.getSpeed();f++) {
+      if (settings.processSkip() || ai.map(a => a.getCar()).every(car => !car.getIsAlive() || car.getIsStuck())) {
+        world.rebuildTracks();
         learner.newGeneration(ai);
+        
+      } else {
+        ai.forEach(a => a.update())
       }
-      
-    } else {
-      ai.forEach(a => a.update())
     }
+
+
   }
 
 
 
   function draw() {
-    canvasManager.draw(ai.map(a=>a.getCar()),ai,world.getTracks());
+    canvasManager.draw(ai,world.getTracks());
   }
 
   function loop() {

@@ -1,19 +1,29 @@
 import Car from './car.js';
+import TrackBuilder from './trackBuilder.js';
 
 export default class World {
-    constructor() {
+    constructor(settings) {
+        this.settings = settings;
         this.tracks = [];
         this.straightWidth = 0;
         this.straightHeight = 0;
         this.curvedWidth = 0;
         this.curvedHeight = 0;
+
+        this.trackBuilder = new TrackBuilder();
+        this.trackBuilder.buildTracks(this,settings.getNextMap());
     }
 
     addTrack = (track) => {
         this.tracks.push(track)
     }
 
-    generateCar = () => new Car(this,100, 400,Math.PI * 2)    
+    rebuildTracks = () => {
+        this.tracks = [];
+        this.trackBuilder.buildTracks(this,this.settings.getNextMap());
+    }
+
+    generateCar = () => new Car(this,100, 700,Math.PI * 2)    
 
     collisionCheck = (x,y,radius) => {
         const collidingTracks = this.tracks.filter(t => 

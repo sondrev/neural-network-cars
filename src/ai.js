@@ -4,8 +4,7 @@ export default class Ai {
     constructor(id,car) {
         this.id=id;
         this.car=car;
-        this.network = new synaptic.Architect.Perceptron(4, 5, 2);
-        this.learningRate = 0.2;
+        this.network = new synaptic.Architect.Perceptron(3, 3,3, 2);
 
         this.input = undefined;
         this.output = undefined;
@@ -23,18 +22,18 @@ export default class Ai {
 
         if (this.car.getIsAlive()) {
             this.input = [
-                this.car.getSpeed()/3.0,
-                this.car.getCollisionRayLeft()/500,
-                this.car.getCollisionRayStraight()/500
-                ,this.car.getCollisionRayRight()/500
+                this.car.getCollisionRayLeft()/this.car.getCollisionRayMax(),
+                this.car.getCollisionRayStraight()/this.car.getCollisionRayMax(),
+                this.car.getCollisionRayRight()/this.car.getCollisionRayMax(),
             ];
             this.output = this.network.activate(this.input);
 
-            const outputAccelerate = this.output[0]; 
-            const outputTurn = this.output[1];
-    
+            const outputTurn = this.output[0];    
+            const outputAccelerate = this.output[1];    
             this.car.accelerate(outputAccelerate);
-            this.car.turn(outputTurn);
+
+            if (outputTurn>0.52) this.car.turn(1);
+            if (outputTurn<0.48) this.car.turn(0);         
     
             this.car.update();
         };

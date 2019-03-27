@@ -1,5 +1,8 @@
 export default class CanvasManager {
-    constructor(world) {
+    constructor(world,learner,settings) {
+        this.learner=learner;
+        this.settings=settings;
+
         this.worldWidth = world.getWidth();
         this.worldHeight = world.getHeight();
         this.canvas = document.createElement('CANVAS');
@@ -12,20 +15,6 @@ export default class CanvasManager {
 
         this.imgTrackCurved = new Image() 
         this.imgTrackCurved.src = "trackStraight.png" 
-
-
-
-        this.canvas.addEventListener("click", function (evt) {
-                var rect = this.getBoundingClientRect();
-                world.collisionCheck(evt.clientX - rect.left,evt.clientY - rect.top,4)
-                return {
-                    x: evt.clientX - rect.left,
-                    y: evt.clientY - rect.top
-                };
-        }, false);
-      
-      //Get Mouse Position
-
     }
 
 
@@ -34,7 +23,52 @@ export default class CanvasManager {
         return this.canvas;
     }
 
-    draw(cars,ais,tracks) {
+    drawNeuralNetwork(network,x,y) {
+        //console.log(network)
+    }
+
+    drawInformationPanel(AIs,x,y) {
+
+        y+=50;
+
+        this.ctx.font = "16px Arial";
+        this.ctx.fillStyle = "black";
+        this.ctx.fillText("Gen "+this.learner.getGeneration()+" - Speed "+this.settings.getSpeed()+"x" , x-4, y);
+        y+=50;
+
+        AIs.forEach(ai => {
+            const carW=30;
+            const carL=50
+            const car = ai.getCar();
+            this.ctx.beginPath();
+            this.ctx.fillStyle = car.getColor();
+            this.ctx.fillRect(x -carW/2,y -carL/2, carW,carL);
+
+
+            this.ctx.font = "20px Arial";
+            this.ctx.fillStyle = "black";
+            this.ctx.fillText(ai.getId() , x-4, y);
+
+            this.ctx.font = "12px Arial";
+
+            ai.getInputs().forEach((input,index) => {
+                this.ctx.fillText(new String(input).substring(0,5) , x+30, y+index*15);
+            })
+
+            ai.getOutputs().forEach((output,index) => {
+                this.ctx.fillText(new String(output).substring(0,5) , x+70, y+index*15);
+            })
+
+            this.ctx.fillText(ai.getFitness() , x+120, y);
+            y+=80;
+
+            this.drawNeuralNetwork(ai.getNetwork().toJSON(),x+130,y)
+
+            
+        })
+    }
+
+    draw(AIs,tracks) {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctx.beginPath();
         this.ctx.rect(0, 0, this.canvas.width, this.canvas.height);
@@ -63,8 +97,7 @@ export default class CanvasManager {
         
         //car
 
-        const carW=30;
-        const carL=50
+
 
         const drawWheel = function(ctx,x,y) {
             ctx.beginPath();
@@ -79,7 +112,7 @@ export default class CanvasManager {
         }
         
 
-        ais.forEach(ai=> {
+        AIs.forEach(ai=> {
 
             const car = ai.getCar();
 
@@ -105,7 +138,8 @@ export default class CanvasManager {
             drawWheel(this.ctx,carW/2,15)
 
 
-
+            const carW=30;
+            const carL=50
             this.ctx.beginPath();
             this.ctx.fillStyle = car.getColor();
             this.ctx.fillRect(-carW/2,-carL/2, carW,carL);
@@ -120,36 +154,9 @@ export default class CanvasManager {
 
         })
 
-
-        let y=50;
-        let x=this.worldWidth+ 20;
-        ais.forEach(ai => {
-            const car = ai.getCar();
-            this.ctx.beginPath();
-            this.ctx.fillStyle = car.getColor();
-            this.ctx.fillRect(x -carW/2,y -carL/2, carW,carL);
+        this.drawInformationPanel(AIs,this.worldWidth+ 20,0);
 
 
-            this.ctx.font = "20px Arial";
-            this.ctx.fillStyle = "black";
-            this.ctx.fillText(ai.getId() , x-4, y);
-
-            this.ctx.font = "12px Arial";
-
-            ai.getInputs().forEach((input,index) => {
-                this.ctx.fillText(new String(input).substring(0,5) , x+30, y+index*15);
-            })
-
-            ai.getOutputs().forEach((output,index) => {
-                this.ctx.fillText(new String(output).substring(0,5) , x+70, y+index*15);
-            })
-
-            this.ctx.fillText(ai.getFitness() , x+120, y);
-            
-
-
-            y+=80;
-        })
 
     }
 }

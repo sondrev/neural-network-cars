@@ -6,16 +6,18 @@ const POPULATION_SIZE = 10;
 export default class Learner {
     constructor(world) {
         this.generation = 0;
+        this.highestFitness = 0;
         this.world = world;
     }
 
     mutateKeys(data, key, probability, amount){
         for (var k = 0; k < data.length; k++) {
             if (Math.random() < probability) data[k][key] += data[k][key] * amount *(Math.random() - 0.5) * 3 + (Math.random() - 0.5);
+            //if (Math.random() < probability) data[k][key] += -0.4+0.8*Math.random();
         }
     }
 
-    mutateAi(ai,probability=0.2,amount=0.2) {
+    mutateAi(ai,probability=0.2,amount=1) {
         let newAi = JSON.parse(JSON.stringify(ai));
         this.mutateKeys(newAi.neurons, 'bias', probability,amount);
         this.mutateKeys(newAi.connections, 'weight', probability,amount);
@@ -48,26 +50,41 @@ export default class Learner {
 
     newGeneration = (ai) => {
         const topAis = [ ...ai].sort((a1,a2) => (a2.getFitness()-a1.getFitness()));
-        console.log("Gen "+this.generation+". All dead. "+topAis[0].getId()+" is the best AI with score of "+topAis[0].getFitness())
+        const bestAi =topAis[0];
+        const bestNetwork = bestAi.getNetwork().toJSON();
+
+        if (bestAi.getFitness()>this.highestFitness) {
+            this.highestFitness = bestAi.getFitness();
+            console.log("----RECORD----");
+            console.log("Generation "+this.generation+". AI "+bestAi.getId()+" is the best AI with score of "+bestAi.getFitness())
+            console.log(bestNetwork)
+            console.log("-------------");
+        } else {
+            console.log("Gen "+this.generation+". "+bestAi.getId()+" is the best AI with score of "+bestAi.getFitness())
+        }
+
+        
   
-        const best =topAis[0].getNetwork().toJSON();
+        
         const secondBest =topAis[1].getNetwork().toJSON();
 
-        console.log(best);
-
         ai.forEach(a => a.reset(this.world.generateCar()))
-        ai[0].setAiFromJSON(best)
-        ai[5].setAiFromJSON(this.mutateAi(best))
-        ai[5].setAiFromJSON(this.mutateAi(best))
-        ai[5].setAiFromJSON(this.mutateAi(best))
-        ai[5].setAiFromJSON(this.mutateAi(best))
-        ai[5].setAiFromJSON(this.mutateAi(best))
-        ai[6].setAiFromJSON(this.mutateAi(best))
-        ai[7].setAiFromJSON(this.mutateAi(best))
-        ai[8].setAiFromJSON(this.mutateAi(best))
-        ai[9].setAiFromJSON(this.mutateAi(best))
+        ai[0].setAiFromJSON(bestNetwork)
+        ai[1].setAiFromJSON(this.mutateAi(bestNetwork))
+        ai[2].setAiFromJSON(this.mutateAi(bestNetwork))
+        ai[3].setAiFromJSON(this.mutateAi(bestNetwork))
+        ai[4].setAiFromJSON(this.mutateAi(bestNetwork))
+        ai[5].setAiFromJSON(this.mutateAi(bestNetwork))
+        ai[6].setAiFromJSON(this.mutateAi(bestNetwork))
+        ai[7].setAiFromJSON(this.mutateAi(bestNetwork))
+        ai[8].setAiFromJSON(this.mutateAi(bestNetwork))
+        ai[9].setAiFromJSON(this.mutateAi(bestNetwork))
 
         this.generation++;
+    }
+
+    getGeneration() {
+        return this.generation;
     }
 
 
