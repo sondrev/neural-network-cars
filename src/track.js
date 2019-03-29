@@ -13,14 +13,6 @@ export default class Track {
     getHeight = () => this.trackType.getHeight();
     getWidth = () => this.trackType.getWidth();
     getTrackType = () => this.trackType;
-    getRotation = () => {
-        return Math.PI*this.direction*0.5;
-    }
-
-    getIsVertical = () => this.direction=='sn'||this.direction=='ns'
-    getIsHorisontal = () => this.direction=='ew'||this.direction=='we'
-    getIsCorner = () => this.direction=='se'||this.direction=='ws'||this.direction=='nw'||this.direction=='en'
-                      ||this.direction=='es'||this.direction=='sw'||this.direction=='wn'||this.direction=='ne'
-
-    getIsTrack = () => this.getDirection()!='  ';
+    getRotation = () => {return Math.PI*(this.direction%4)*0.5;}
+    getFlip = () => this.direction>=4;
 }

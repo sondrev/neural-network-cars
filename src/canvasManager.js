@@ -90,7 +90,10 @@ export default class CanvasManager {
             this.ctx.save();
             this.ctx.translate(x,y);
             this.ctx.rotate(track.getRotation());
+            if (track.getFlip()) this.ctx.scale(-1,1);
             this.ctx.drawImage(track.getTrackType().getImage(),-track.getTrackType().getWidth()/2,-track.getTrackType().getHeight()/2);
+
+            
             this.ctx.restore();
 
         });
@@ -129,7 +132,8 @@ export default class CanvasManager {
 
 
 
-
+            const carW=30;
+            const carL=50
 
 
             drawWheel(this.ctx,-carW/2,-15)
@@ -138,8 +142,7 @@ export default class CanvasManager {
             drawWheel(this.ctx,carW/2,15)
 
 
-            const carW=30;
-            const carL=50
+
             this.ctx.beginPath();
             this.ctx.fillStyle = car.getColor();
             this.ctx.fillRect(-carW/2,-carL/2, carW,carL);

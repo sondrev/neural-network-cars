@@ -1,6 +1,11 @@
 import Track from './track.js';
 import TrackType from './trackType.js';
 
+const trackRound = ["s","s","s","s","s","r","s","s","s","s","s","s","s","s","r","s","s","s","s","s","r","s","s","s","s","s","s","s","s","r"]
+const trackHard = ["s","s","r","l","s","l","r","r","s","s","s","s","s","s","s","s","r","s","s","s","s","s","r","r","s","s","s","l","s","s","l","l","r","s","s","r","s","s","s","s","s","r"]
+const trackLong = ["s","s","r","s","s","s","s","s","s","s","s","r","s","s","r","s","s","s","s","s","s","s","s","r"]
+const trackCurves = ["s","s","s","r","s","s","s","s","l","s","r","s","s","r","s","s","s","s","s","s","r","r","s","s","l","l","s","s","r","s","s","s","s","r","s"]
+
 export default class TrackBuilder {
     buildTracks = (world,trackNumber) => {
 
@@ -19,21 +24,27 @@ export default class TrackBuilder {
         }
 
         function moveCurved(dir) {
-            if (dir === 0) y+=curvedTrackType.getWidth();
+            if (dir === 0) y-=curvedTrackType.getWidth();
+            if (dir === 1) x+=curvedTrackType.getWidth();
+            if (dir === 2) y+=curvedTrackType.getWidth();
+            if (dir === 3) x-=curvedTrackType.getWidth();
+        }
+
+        function moveCurvedReverse(dir) {
+            if (dir === 0) y-=curvedTrackType.getWidth();
             if (dir === 1) x+=curvedTrackType.getWidth();
             if (dir === 2) y+=curvedTrackType.getWidth();
             if (dir === 3) x-=curvedTrackType.getWidth();
         }
       
-        //const trackList = ["s","s","s","r","s","s","r","s","s","s","r","s","s","r"]
-        const trackList1 = ["s","s","s","s","s","r","s","s","s","s","s","s","s","s","r","s","s","s","s","s","r","s","s","s","s","s","s","s","s","r"]
-        const trackList2 = ["s","r","s","r","s","r","s","r"]
-        const trackList3 = ["s","s","s","s","s","r","s","s","s","s","s","s","s","s","r","s","s","s","s","s","r","s","s","s","s","s","s","s","s","r"]
         let trackList = []
+        if (trackNumber === 1) trackList=trackRound;
+        if (trackNumber === 2) trackList=trackLong;
+        if (trackNumber === 3) trackList=trackHard;
+        if (trackNumber === 4) trackList=trackCurves;
 
-        if (trackNumber === 1) trackList=trackList1;
-        if (trackNumber === 2) trackList=trackList2;
-        if (trackNumber === 3) trackList=trackList3;
+        const scw = curvedTrackType.getWidth()-straightTrackType.getWidth(); //Difference between straight and curved tiles in width
+        const shcw = curvedTrackType.getWidth()-straightTrackType.getHeight(); ////Difference between straight height and curved width
 
         trackList.forEach(t => {
           switch(t) {
@@ -45,49 +56,77 @@ export default class TrackBuilder {
             case "r":
                 switch(dir) {
                     case 0:
-                        x+=(133-125)/2;
-                        y-=(133-100)/2;
+                        x+=(scw)/2;
+                        y-=(shcw)/2;
                         world.addTrack(new Track(dir,curvedTrackType,x,y));
-                        x-=(133-100)/2;
-                        y-=(133-125)/2;
-        
-                        dir = (dir+1)%4;
-                        moveCurved(dir);
+                        x-=(shcw)/2;
+                        y-=(scw)/2;
                         break;
 
                     case 1:
-                        x+=(133-100)/2;
-                        y+=(133-125)/2;
+                        x+=(shcw)/2;
+                        y+=(scw)/2;
                         world.addTrack(new Track(dir,curvedTrackType,x,y));
-                        x+=(133-125)/2;
-                        y-=(133-100)/2;
-        
-                        dir = (dir+1)%4;
-                        moveCurved(dir);
+                        x+=(scw)/2;
+                        y-=(shcw)/2;
                         break;
 
                     case 2:
-                        x-=(133-125)/2;
-                        y+=(133-100)/2;
+                        x-=(scw)/2;
+                        y+=(shcw)/2;
                         world.addTrack(new Track(dir,curvedTrackType,x,y));
-                        x+=(133-100)/2;
-                        y+=(133-125)/2;
-        
-                        dir = (dir+1)%4;
-                        moveCurved(dir);
+                        x+=(shcw)/2;
+                        y+=(scw)/2;
                         break;
 
                     case 3:
-                        x-=(133-100)/2;
-                        y-=(133-125)/2;
+                        x-=(shcw)/2;
+                        y-=(scw)/2;
                         world.addTrack(new Track(dir,curvedTrackType,x,y));
-                        x+=(133-125)/2;
-                        y-=(133-100)/2;
-        
-                        dir = (dir+1)%4;
-                        moveCurved(dir);
+                        x-=(scw)/2;
+                        y+=(shcw)/2;
                         break;
                 }
+                dir = (dir+1)%4;
+                moveCurved(dir);
+                break;
+
+            case "l":
+                switch(dir) {
+                    case 0:
+                        x-=(scw)/2;
+                        y-=(shcw)/2;
+                        world.addTrack(new Track(dir+4,curvedTrackType,x,y));
+                        x+=(shcw)/2;
+                        y-=(scw)/2;
+                        break;
+
+                    case 1:
+                        x+=(shcw)/2;
+                        y-=(scw)/2;
+                        world.addTrack(new Track(dir+4,curvedTrackType,x,y));
+                        x+=(scw)/2;
+                        y+=(shcw)/2;
+                        break;
+
+                    case 2:
+                        x-=(scw)/2;
+                        y+=(shcw)/2;
+                        world.addTrack(new Track(dir+4,curvedTrackType,x,y));
+                        x-=(shcw)/2;
+                        y+=(scw)/2;
+                        break;
+
+                    case 3:
+                        x-=(shcw)/2;
+                        y+=(scw)/2;
+                        world.addTrack(new Track(dir+4,curvedTrackType,x,y));
+                        x-=(scw)/2;
+                        y-=(shcw)/2;
+                        break;
+                }
+                dir = (dir+3)%4;
+                moveCurvedReverse(dir);
                 break;
       
           }

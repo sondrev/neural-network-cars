@@ -4,7 +4,7 @@ export default class Ai {
     constructor(id,car) {
         this.id=id;
         this.car=car;
-        this.network = new synaptic.Architect.Perceptron(3, 3,3, 2);
+        this.network = new synaptic.Architect.Perceptron(3, 3,3, 3);
 
         this.input = undefined;
         this.output = undefined;
@@ -28,12 +28,14 @@ export default class Ai {
             ];
             this.output = this.network.activate(this.input);
 
-            const outputTurn = this.output[0];    
-            const outputAccelerate = this.output[1];    
+            const outputTurnR = this.output[0];  
+            const outputTurnL = this.output[1];     
+            const outputAccelerate = this.output[2];    
             this.car.accelerate(outputAccelerate);
 
-            if (outputTurn>0.52) this.car.turn(1);
-            if (outputTurn<0.48) this.car.turn(0);         
+            if (outputTurnR>0.52) this.car.turn(1);
+            if (outputTurnL>0.52) this.car.turn(0);
+            //if (outputTurn<0.48) this.car.turn(0);         
     
             this.car.update();
         };
@@ -43,7 +45,7 @@ export default class Ai {
     getInputs = () => this.input;
     getOutputs = () => this.output;
     //getFitness = () => 100*(this.car.getVisitedTracks().length-2)/1;
-    getFitness = () => this.car.getDistanceTraveled();
+    getFitness = () => this.car.getIsStuck() ? 0 : this.car.getDistanceTraveled();
 
 
 
