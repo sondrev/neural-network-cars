@@ -127,19 +127,14 @@ export default class CanvasManager {
             this.ctx.translate(car.getX(),car.getY());
             this.ctx.rotate(car.getAngle());
 
-
-
-
-
+            const carW=30;
+            const carL=50
 
             drawWheel(this.ctx,-carW/2,-15)
             drawWheel(this.ctx,-carW/2,15)
             drawWheel(this.ctx,carW/2,-15)
             drawWheel(this.ctx,carW/2,15)
 
-
-            const carW=30;
-            const carL=50
             this.ctx.beginPath();
             this.ctx.fillStyle = car.getColor();
             this.ctx.fillRect(-carW/2,-carL/2, carW,carL);
