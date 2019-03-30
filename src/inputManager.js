@@ -11,6 +11,8 @@ const keyCode2 = 50;
 const keyCode2Numpad = 98;
 const keyCode3 = 51;
 const keyCode3Numpad = 99;
+const keyCode4 = 52;
+const keyCode4Numpad = 100;
 
 
 export default class InputManager {
@@ -39,6 +41,9 @@ export default class InputManager {
         }
         if(event.keyCode == keyCode3Numpad || event.keyCode == keyCode3) {
             this.settings.setNextMap(3);
+        }
+        if(event.keyCode == keyCode4Numpad || event.keyCode == keyCode4) {
+            this.settings.setNextMap(4);
         }
 
       }
