@@ -90,7 +90,6 @@ export default class CanvasManager {
             this.ctx.save();
             this.ctx.translate(x,y);
             this.ctx.rotate(track.getRotation());
-            if (track.getFlip()) this.ctx.scale(-1,1);
             this.ctx.drawImage(track.getTrackType().getImage(),-track.getTrackType().getWidth()/2,-track.getTrackType().getHeight()/2);
 
             

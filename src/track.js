@@ -14,5 +14,4 @@ export default class Track {
     getWidth = () => this.trackType.getWidth();
     getTrackType = () => this.trackType;
     getRotation = () => {return Math.PI*(this.direction%4)*0.5;}
-    getFlip = () => this.direction>=4;
 }
